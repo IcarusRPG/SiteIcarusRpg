@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-cinzel: Georgia, "Times New Roman", serif;
+  --font-inter: Arial, Helvetica, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(16, 216, 207, 0.13), transparent 30rem),
+    radial-gradient(circle at bottom right, rgba(216, 163, 58, 0.11), transparent 28rem),
+    #030706;
+  color: #f7edd8;
+  font-family: var(--font-inter);
+}
+
+body::before {
+  pointer-events: none;
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.42;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+::selection {
+  background: rgba(16, 216, 207, 0.35);
+  color: #fff6df;
+}
+
+@layer components {
+  .container-icarus {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .arcane-panel {
+    @apply border border-mystic/20 bg-obsidian/70 shadow-arcane backdrop-blur-md;
+  }
+
+  .gold-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent;
+  }
+}
