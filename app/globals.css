@@ -59,3 +59,21 @@ body::before {
     @apply h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent;
   }
 }
+
+@keyframes alfar-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-alfar-reveal {
+  animation: alfar-reveal 560ms ease-out both;
+}

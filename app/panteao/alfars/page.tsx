@@ -1,5 +1,5 @@
-import PlaceholderPage from "@/components/sections/PlaceholderPage";
+import AlfarsSection from "@/components/sections/AlfarsSection";
 
 export default function AlfarsPage() {
-  return <PlaceholderPage title="Alfars" eyebrow="Panteão de Icarus" />;
+  return <AlfarsSection />;
 }
