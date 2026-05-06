@@ -1,5 +1,5 @@
-import PlaceholderPage from "@/components/sections/PlaceholderPage";
+import AboutIcarusSection from "@/components/sections/AboutIcarusSection";
 
 export default function SobreIcarusPage() {
-  return <PlaceholderPage title="Sobre Icarus" />;
+  return <AboutIcarusSection />;
 }

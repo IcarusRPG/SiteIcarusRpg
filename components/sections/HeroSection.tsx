@@ -1,6 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
-import { logoUrl } from "@/lib/navigation";
+import HeroCarousel from "@/components/sections/HeroCarousel";
 
 export default function HeroSection() {
   return (
@@ -9,17 +8,8 @@ export default function HeroSection() {
       <div className="absolute left-1/2 top-36 -z-10 h-72 w-72 -translate-x-1/2 rounded-full bg-mystic/15 blur-3xl" />
       <div className="container-icarus flex min-h-[calc(100vh-7rem)] items-center py-16">
         <div className="mx-auto max-w-5xl text-center">
-          <div className="mx-auto mb-8 max-w-4xl rounded-[2rem] border border-mystic/10 bg-black/20 p-4 shadow-arcane backdrop-blur-sm">
-            <Image
-              src={logoUrl}
-              alt="Icarus RPG"
-              width={1600}
-              height={900}
-              priority
-              className="mx-auto h-auto w-full max-w-3xl object-contain drop-shadow-[0_0_28px_rgba(16,216,207,0.24)]"
-            />
-          </div>
-          <p className="mb-4 font-display text-sm uppercase tracking-[0.45em] text-mystic/90">RPG de mesa de fantasia épica</p>
+          <HeroCarousel />
+          <p className="mb-4 font-display text-sm uppercase tracking-[0.45em] text-mystic/90">Novo RPG de mesa Brasileiro</p>
           <h1 className="font-display text-4xl font-black text-ember drop-shadow-[0_0_16px_rgba(216,163,58,0.18)] sm:text-5xl lg:text-7xl">
             Adentre os Mistérios de Icarus
           </h1>
