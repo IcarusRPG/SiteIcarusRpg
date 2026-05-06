@@ -1,5 +1,5 @@
-import PlaceholderPage from "@/components/sections/PlaceholderPage";
+import PantheonSection from "@/components/sections/PantheonSection";
 
 export default function PanteaoPage() {
-  return <PlaceholderPage title="O Panteão" eyebrow="Deuses em silêncio" />;
+  return <PantheonSection />;
 }
