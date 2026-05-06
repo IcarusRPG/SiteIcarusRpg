@@ -7,6 +7,7 @@ export type NavItem = {
 export const navigationItems: NavItem[] = [
   { label: "Página Principal", href: "/" },
   { label: "Sobre Icarus", href: "/sobre-icarus" },
+  { label: "Conhecimento Popular", href: "/conhecimento-popular" },
   {
     label: "O Panteão",
     href: "/panteao",

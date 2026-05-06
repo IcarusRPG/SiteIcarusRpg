@@ -17,7 +17,7 @@ export default function Footer() {
             />
             <div>
               <p className="font-display text-xl font-bold text-ember">Icarus RPG</p>
-              <p className="text-sm text-parchment/70">Novo RG de mesa Brasileiro</p>
+              <p className="text-sm text-parchment/70">Novo RPG de mesa Brasileiro</p>
             </div>
           </div>
 
