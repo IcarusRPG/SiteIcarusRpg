@@ -65,51 +65,49 @@ export default function PopularKnowledgeSection() {
           </p>
         </div>
 
-        <nav className="sticky top-24 z-30 mx-auto mt-10 flex max-w-4xl flex-col gap-3 rounded-3xl border border-gold/20 bg-abyss/85 p-3 shadow-arcane backdrop-blur-xl sm:flex-row" aria-label="Navegação rápida das histórias">
-          {stories.map((story, index) => (
-            <a
-              key={story.id}
-              href={`#${story.id}`}
-              className="flex-1 rounded-2xl border border-mystic/20 bg-mystic/5 px-4 py-3 text-center text-sm font-semibold text-parchment transition duration-300 hover:-translate-y-0.5 hover:border-gold/45 hover:bg-gold/10 hover:text-ember"
-            >
-              {index + 1} - {story.title}
-            </a>
-          ))}
-        </nav>
+        <div className="mt-14 grid items-start gap-8 lg:grid-cols-[18rem_1fr]">
+          <nav className="sticky top-24 z-30 flex flex-col gap-3 rounded-3xl border border-gold/20 bg-abyss/85 p-4 shadow-arcane backdrop-blur-xl" aria-label="Navegação rápida das histórias">
+            <p className="px-2 font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Navegação rápida</p>
+            {stories.map((story) => (
+              <a
+                key={story.id}
+                href={`#${story.id}`}
+                className="rounded-2xl border border-mystic/20 bg-mystic/5 px-4 py-4 text-left text-sm font-semibold text-parchment transition duration-300 hover:-translate-y-0.5 hover:border-gold/45 hover:bg-gold/10 hover:text-ember"
+              >
+                {story.title}
+              </a>
+            ))}
+          </nav>
 
-        <div className="mt-14 space-y-14">
-          {stories.map((story, index) => (
-            <article
-              key={story.id}
-              id={story.id}
-              className="scroll-mt-40 overflow-hidden rounded-[2rem] border border-mystic/20 bg-black/42 shadow-arcane backdrop-blur-md"
-            >
-              <div className={`grid gap-0 lg:grid-cols-2 ${index % 2 === 1 ? "lg:[&>div:first-child]:order-2" : ""}`}>
-                <div className="relative min-h-[22rem] border-b border-gold/20 bg-abyss/60 lg:border-b-0 lg:border-r">
+          <div className="space-y-14">
+            {stories.map((story) => (
+              <article
+                key={story.id}
+                id={story.id}
+                className="scroll-mt-40 overflow-hidden rounded-[2rem] border border-mystic/20 bg-black/42 p-6 shadow-arcane backdrop-blur-md sm:p-8 lg:p-10"
+              >
+                <h2 className="font-display text-3xl font-black text-ember sm:text-5xl">{story.title}</h2>
+                <div className="gold-divider my-7" />
+
+                <div className="relative aspect-[16/9] overflow-hidden rounded-[1.5rem] border border-gold/20 bg-abyss/60 shadow-gold">
                   <Image
                     src={story.image}
                     alt={story.imageAlt}
                     fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    sizes="(max-width: 1024px) 100vw, 900px"
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-abyss/70 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-abyss/55 via-transparent to-transparent" />
                 </div>
 
-                <div className="relative p-7 sm:p-10">
-                  <div className="absolute right-0 top-0 h-40 w-40 rounded-full bg-mystic/10 blur-3xl" />
-                  <p className="font-display text-xs uppercase tracking-[0.35em] text-mystic/80">História {index + 1}</p>
-                  <h2 className="mt-3 font-display text-3xl font-black text-ember sm:text-4xl">{story.title}</h2>
-                  <div className="gold-divider my-6" />
-                  <div className="space-y-5 text-base leading-8 text-parchment/80">
-                    {story.paragraphs.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
+                <div className="mt-8 space-y-5 text-base leading-8 text-parchment/80">
+                  {story.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            ))}
+          </div>
         </div>
       </div>
     </section>
