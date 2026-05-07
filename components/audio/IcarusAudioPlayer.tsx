@@ -32,6 +32,8 @@ function getStoredVolume(value: string | null) {
 
 export default function IcarusAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
+  const shouldResumeAfterTrackChangeRef = useRef(false);
+  const isPlayingRef = useRef(false);
   const [tracks, setTracks] = useState<AudioTrack[]>([]);
   const [selectedTrackFile, setSelectedTrackFile] = useState<string>("");
   const [volume, setVolume] = useState(0.45);
@@ -83,14 +85,43 @@ export default function IcarusAudioPlayer() {
   }, [isOpen]);
 
   useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
     if (selectedTrackFile) {
       window.localStorage.setItem(storageKeys.selectedTrack, selectedTrackFile);
     }
+
+    if (!shouldResumeAfterTrackChangeRef.current || !selectedTrackFile) {
+      return;
+    }
+
+    shouldResumeAfterTrackChangeRef.current = false;
+    audioRef.current?.load();
+    playAmbience();
   }, [selectedTrackFile]);
 
-  function selectTrack(file: string) {
+  function selectTrack(file: string, keepPlaying = isPlayingRef.current) {
+    if (keepPlaying) {
+      shouldResumeAfterTrackChangeRef.current = true;
+    }
+
+    if (file === selectedTrackFile) {
+      shouldResumeAfterTrackChangeRef.current = false;
+
+      if (keepPlaying) {
+        playAmbience();
+      }
+
+      return;
+    }
+
     setSelectedTrackFile(file);
-    setIsPlaying(false);
+
+    if (!keepPlaying) {
+      setIsPlaying(false);
+    }
   }
 
   function playAmbience() {
@@ -111,7 +142,7 @@ export default function IcarusAudioPlayer() {
     playAmbience();
   }
 
-  function moveTrack(direction: "next" | "previous") {
+  function moveTrack(direction: "next" | "previous", keepPlaying = isPlayingRef.current) {
     if (tracks.length === 0) {
       return;
     }
@@ -121,7 +152,34 @@ export default function IcarusAudioPlayer() {
         ? (selectedTrackIndex + 1) % tracks.length
         : (selectedTrackIndex - 1 + tracks.length) % tracks.length;
 
-    selectTrack(tracks[nextIndex].file);
+    selectTrack(tracks[nextIndex].file, keepPlaying);
+  }
+
+  function handleTrackEnded() {
+    if (tracks.length === 0) {
+      setIsPlaying(false);
+      return;
+    }
+
+    if (tracks.length === 1) {
+      if (isLooping && audioRef.current) {
+        audioRef.current.currentTime = 0;
+        playAmbience();
+        return;
+      }
+
+      setIsPlaying(false);
+      return;
+    }
+
+    const isLastTrack = selectedTrackIndex === tracks.length - 1;
+
+    if (isLastTrack && !isLooping) {
+      setIsPlaying(false);
+      return;
+    }
+
+    moveTrack("next", true);
   }
 
   if (!hasLoaded) {
@@ -135,9 +193,8 @@ export default function IcarusAudioPlayer() {
       <audio
         ref={audioRef}
         src={selectedTrack?.file}
-        loop={isLooping}
         preload="metadata"
-        onEnded={() => setIsPlaying(false)}
+        onEnded={handleTrackEnded}
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
       />
@@ -180,7 +237,7 @@ export default function IcarusAudioPlayer() {
               Faixa
               <select
                 value={selectedTrack?.file ?? ""}
-                onChange={(event) => selectTrack(event.target.value)}
+                onChange={(event) => selectTrack(event.target.value, isPlayingRef.current)}
                 className="mt-2 w-full rounded-2xl border border-mystic/20 bg-black/40 px-3 py-2 text-sm normal-case tracking-normal text-parchment outline-none transition focus:border-gold/50"
               >
                 {tracks.map((track) => (
@@ -244,12 +301,12 @@ export default function IcarusAudioPlayer() {
                 onChange={(event) => setIsLooping(event.target.checked)}
                 className="accent-gold"
               />
-              Loop
+              Loop da lista
             </label>
           </div>
 
           <p className="mt-3 text-xs text-parchment/45">
-            {isPlaying ? "Ambiência ecoando pelo salão." : "Clique em Ativar Ambiência para iniciar sem autoplay forçado."}
+            {isPlaying ? "Ambiência ativa: as faixas seguem em sequência." : "Clique em Ativar Ambiência para iniciar sem autoplay forçado."}
           </p>
         </div>
       )}
