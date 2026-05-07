@@ -1,11 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 type AudioTrack = {
   title: string;
   file: string;
 };
+
+const musicTokenUrl = "https://res.cloudinary.com/dk6okgt0a/image/upload/v1778177012/Token_Musica_zjonie.png";
 
 const storageKeys = {
   volume: "icarus-audio-volume",
@@ -189,7 +192,7 @@ export default function IcarusAudioPlayer() {
   const hasAvailableTracks = tracks.length > 0 && Boolean(selectedTrack);
 
   return (
-    <aside className="fixed inset-x-3 bottom-3 z-50 md:inset-x-auto md:bottom-6 md:right-6 md:w-80" aria-label="Player de ambiência de Icarus RPG">
+    <aside className="fixed inset-x-3 bottom-3 z-50 md:inset-x-auto md:bottom-6 md:right-6 md:w-80" aria-label="Player de música de Icarus RPG">
       <audio
         ref={audioRef}
         src={selectedTrack?.file}
@@ -203,18 +206,29 @@ export default function IcarusAudioPlayer() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="ml-auto flex rounded-full border border-gold/30 bg-abyss/90 px-4 py-3 text-sm font-semibold text-ember shadow-gold backdrop-blur-xl transition hover:border-mystic/50 hover:text-mystic"
+          className="ml-auto flex items-center gap-3 rounded-full border border-gold/30 bg-abyss/90 py-2 pl-2 pr-4 text-sm font-semibold text-ember shadow-gold backdrop-blur-xl transition hover:border-mystic/50 hover:text-mystic"
         >
-          Ambiência de Icarus
+          <Image src={musicTokenUrl} alt="Token musical de Icarus" width={34} height={34} className="h-8 w-8 rounded-full object-contain drop-shadow-[0_0_10px_rgba(216,163,58,0.35)]" />
+          Ouça a vida em Icarus
         </button>
       ) : (
         <div className="rounded-3xl border border-gold/25 bg-abyss/90 p-4 shadow-gold backdrop-blur-xl md:p-5">
           <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Ambiência</p>
-              <h2 className="mt-1 font-display text-lg font-bold text-ember">
-                {selectedTrack?.title ?? "Nenhuma ambiência disponível"}
-              </h2>
+            <div className="flex items-start gap-3">
+              <Image
+                src={musicTokenUrl}
+                alt="Token musical de Icarus"
+                width={56}
+                height={56}
+                priority
+                className="h-12 w-12 flex-none rounded-full object-contain drop-shadow-[0_0_16px_rgba(216,163,58,0.4)] md:h-14 md:w-14"
+              />
+              <div>
+                <p className="font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Ouça a vida em Icarus</p>
+                <h2 className="mt-1 font-display text-lg font-bold text-ember">
+                  {selectedTrack?.title ?? "Nenhuma faixa disponível"}
+                </h2>
+              </div>
             </div>
             <button
               type="button"
@@ -228,7 +242,7 @@ export default function IcarusAudioPlayer() {
 
           {!hasAvailableTracks ? (
             <p className="mt-4 rounded-2xl border border-mystic/15 bg-black/25 px-4 py-3 text-sm leading-6 text-parchment/65">
-              Nenhuma ambiência disponível. Adicione arquivos .mp3 em <span className="text-mystic">public/audio</span> para que eles apareçam automaticamente aqui.
+              Nenhuma faixa disponível. Adicione arquivos .mp3 em <span className="text-mystic">public/audio</span> para que eles apareçam automaticamente aqui.
             </p>
           ) : null}
 
@@ -260,7 +274,7 @@ export default function IcarusAudioPlayer() {
                   : "border-gold/40 bg-gold/15 text-ember hover:bg-gold/25"
               }`}
             >
-              {isPlaying ? "Pausar Ambiência" : "Ativar Ambiência"}
+              {isPlaying ? "Pausar Player" : "Ativar Player"}
             </button>
             <button
               type="button"
@@ -306,7 +320,7 @@ export default function IcarusAudioPlayer() {
           </div>
 
           <p className="mt-3 text-xs text-parchment/45">
-            {isPlaying ? "Ambiência ativa: as faixas seguem em sequência." : "Clique em Ativar Ambiência para iniciar sem autoplay forçado."}
+            {isPlaying ? "Player ativo: as faixas seguem em sequência." : "Clique em Ativar Player para iniciar sem autoplay forçado."}
           </p>
         </div>
       )}
