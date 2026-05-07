@@ -7,6 +7,7 @@ type Alfar = {
   name: string;
   image: string;
   description: string[];
+  obligations?: string[];
 };
 
 const alfars: Alfar[] = [
@@ -17,7 +18,9 @@ const alfars: Alfar[] = [
       "Alétris rege o imprevisível, o incerto e a transformação. Seu domínio está tanto no tudo quanto no absoluto nada, tecendo o destino em uma dança que abraça o sim, o não e o talvez. Representando a transição entre forças opostas, Alétris é a manifestação viva das estações e ciclos naturais.",
       "Durante o outono e o inverno, Alétris assume uma forma feminina, expressando introspecção e quietude. Na primavera e no verão, revela-se em forma masculina, irradiando energia e renovação. Em raros momentos de harmonia entre o caos e a ordem, surge em ambas as formas ao mesmo tempo, pintando o arco-íris nos céus como um lembrete de sua dualidade eterna.",
       "Aqueles que nascem com dois espíritos em um único corpo, ou cujas mentes transitam entre diferentes consciências, são considerados abençoados por Alétris. Essas pessoas são frequentemente levadas aos templos sagrados dedicados ao Guardião do Imprevisível, onde são instruídas pelos clérigos a se conectarem com sua essência divina.",
-      "Dogmas e Restrições. Devotos de Alétris devem se adaptar ao fluxo natural das transformações. Assim, não podem se apegar a objetos, hábitos ou relações que já cumpriram seu propósito. Sempre que se depararem com sinais claros de mudança, devem aceitar e seguir adiante, mesmo que isso signifique abandonar algo valioso ou confortável.",
+    ],
+    obligations: [
+      "Devotos de Alétris devem se adaptar ao fluxo natural das transformações. Assim, não podem se apegar a objetos, hábitos ou relações que já cumpriram seu propósito. Sempre que se depararem com sinais claros de mudança, devem aceitar e seguir adiante, mesmo que isso signifique abandonar algo valioso ou confortável.",
       "A imprevisibilidade é uma virtude para aqueles que seguem Alétris. Devotos devem abraçar desafios inesperados e aceitar oportunidades imprevisíveis, mesmo quando assustadoras ou desconfortáveis.",
       "Alétris ensina que todas as formas de vida, expressão e individualidade possuem um papel no grande tecido do mundo. Por isso, seus devotos são proibidos de praticar qualquer tipo de preconceito, intolerância ou exclusão. Devem acolher e respeitar as diferenças com genuína curiosidade e compaixão, jamais julgando ou silenciando a essência do outro.",
     ],
@@ -203,7 +206,15 @@ export default function AlfarsSection() {
                       Obrigações &amp; Restrições.
                     </h3>
                     <div className="gold-divider my-5" />
-                    <div className="min-h-24 rounded-2xl border border-gold/15 bg-black/20" aria-hidden="true" />
+                    {selectedAlfar.obligations && selectedAlfar.obligations.length > 0 ? (
+                      <div className="space-y-4 rounded-2xl border border-gold/15 bg-black/20 p-4 text-sm leading-7 text-parchment/82 md:p-5 md:text-base md:leading-8">
+                        {selectedAlfar.obligations.map((obligation) => (
+                          <p key={obligation}>{obligation}</p>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="min-h-24 rounded-2xl border border-gold/15 bg-black/20" aria-hidden="true" />
+                    )}
                   </section>
                 </div>
               </div>
