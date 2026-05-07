@@ -1,0 +1,329 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type AudioTrack = {
+  title: string;
+  file: string;
+};
+
+const musicTokenUrl = "https://res.cloudinary.com/dk6okgt0a/image/upload/v1778177012/Token_Musica_zjonie.png";
+
+const storageKeys = {
+  volume: "icarus-audio-volume",
+  selectedTrack: "icarus-audio-selected-track",
+  isOpen: "icarus-audio-player-open",
+};
+
+function getStoredBoolean(value: string | null, fallback: boolean) {
+  if (value === null) {
+    return fallback;
+  }
+
+  return value === "true";
+}
+
+function getStoredVolume(value: string | null) {
+  if (value === null) {
+    return 0.45;
+  }
+
+  const parsedVolume = Number(value);
+  return Number.isFinite(parsedVolume) ? Math.min(1, Math.max(0, parsedVolume)) : 0.45;
+}
+
+export default function IcarusAudioPlayer() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const shouldResumeAfterTrackChangeRef = useRef(false);
+  const isPlayingRef = useRef(false);
+  const [tracks, setTracks] = useState<AudioTrack[]>([]);
+  const [selectedTrackFile, setSelectedTrackFile] = useState<string>("");
+  const [volume, setVolume] = useState(0.45);
+  const [isOpen, setIsOpen] = useState(true);
+  const [isLooping, setIsLooping] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+
+  useEffect(() => {
+    setVolume(getStoredVolume(window.localStorage.getItem(storageKeys.volume)));
+    setSelectedTrackFile(window.localStorage.getItem(storageKeys.selectedTrack) ?? "");
+    setIsOpen(getStoredBoolean(window.localStorage.getItem(storageKeys.isOpen), true));
+
+    fetch("/api/audio-tracks")
+      .then((response) => (response.ok ? response.json() : []))
+      .then((loadedTracks: AudioTrack[]) => setTracks(Array.isArray(loadedTracks) ? loadedTracks : []))
+      .finally(() => setHasLoaded(true));
+  }, []);
+
+  const selectedTrackIndex = useMemo(() => {
+    if (tracks.length === 0) {
+      return -1;
+    }
+
+    const persistedTrackIndex = tracks.findIndex((track) => track.file === selectedTrackFile);
+    return persistedTrackIndex >= 0 ? persistedTrackIndex : 0;
+  }, [selectedTrackFile, tracks]);
+
+  const selectedTrack = selectedTrackIndex >= 0 ? tracks[selectedTrackIndex] : undefined;
+
+  useEffect(() => {
+    if (!selectedTrack) {
+      return;
+    }
+
+    setSelectedTrackFile(selectedTrack.file);
+  }, [selectedTrack]);
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKeys.volume, String(volume));
+
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+    }
+  }, [volume]);
+
+  useEffect(() => {
+    window.localStorage.setItem(storageKeys.isOpen, String(isOpen));
+  }, [isOpen]);
+
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
+
+  useEffect(() => {
+    if (selectedTrackFile) {
+      window.localStorage.setItem(storageKeys.selectedTrack, selectedTrackFile);
+    }
+
+    if (!shouldResumeAfterTrackChangeRef.current || !selectedTrackFile) {
+      return;
+    }
+
+    shouldResumeAfterTrackChangeRef.current = false;
+    audioRef.current?.load();
+    playAmbience();
+  }, [selectedTrackFile]);
+
+  function selectTrack(file: string, keepPlaying = isPlayingRef.current) {
+    if (keepPlaying) {
+      shouldResumeAfterTrackChangeRef.current = true;
+    }
+
+    if (file === selectedTrackFile) {
+      shouldResumeAfterTrackChangeRef.current = false;
+
+      if (keepPlaying) {
+        playAmbience();
+      }
+
+      return;
+    }
+
+    setSelectedTrackFile(file);
+
+    if (!keepPlaying) {
+      setIsPlaying(false);
+    }
+  }
+
+  function playAmbience() {
+    audioRef.current?.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+  }
+
+  function pauseAmbience() {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  }
+
+  function toggleAmbience() {
+    if (isPlaying) {
+      pauseAmbience();
+      return;
+    }
+
+    playAmbience();
+  }
+
+  function moveTrack(direction: "next" | "previous", keepPlaying = isPlayingRef.current) {
+    if (tracks.length === 0) {
+      return;
+    }
+
+    const nextIndex =
+      direction === "next"
+        ? (selectedTrackIndex + 1) % tracks.length
+        : (selectedTrackIndex - 1 + tracks.length) % tracks.length;
+
+    selectTrack(tracks[nextIndex].file, keepPlaying);
+  }
+
+  function handleTrackEnded() {
+    if (tracks.length === 0) {
+      setIsPlaying(false);
+      return;
+    }
+
+    if (tracks.length === 1) {
+      if (isLooping && audioRef.current) {
+        audioRef.current.currentTime = 0;
+        playAmbience();
+        return;
+      }
+
+      setIsPlaying(false);
+      return;
+    }
+
+    const isLastTrack = selectedTrackIndex === tracks.length - 1;
+
+    if (isLastTrack && !isLooping) {
+      setIsPlaying(false);
+      return;
+    }
+
+    moveTrack("next", true);
+  }
+
+  if (!hasLoaded) {
+    return null;
+  }
+
+  const hasAvailableTracks = tracks.length > 0 && Boolean(selectedTrack);
+
+  return (
+    <aside className="fixed inset-x-3 bottom-3 z-50 md:inset-x-auto md:bottom-6 md:right-6 md:w-80" aria-label="Player de música de Icarus RPG">
+      <audio
+        ref={audioRef}
+        src={selectedTrack?.file}
+        preload="metadata"
+        onEnded={handleTrackEnded}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+      />
+
+      {!isOpen ? (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="ml-auto flex items-center gap-3 rounded-full border border-gold/30 bg-abyss/90 py-2 pl-2 pr-4 text-sm font-semibold text-ember shadow-gold backdrop-blur-xl transition hover:border-mystic/50 hover:text-mystic"
+        >
+          <Image src={musicTokenUrl} alt="Token musical de Icarus" width={34} height={34} className="h-8 w-8 rounded-full object-contain drop-shadow-[0_0_10px_rgba(216,163,58,0.35)]" />
+          Ouça a vida em Icarus
+        </button>
+      ) : (
+        <div className="rounded-3xl border border-gold/25 bg-abyss/90 p-4 shadow-gold backdrop-blur-xl md:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <Image
+                src={musicTokenUrl}
+                alt="Token musical de Icarus"
+                width={56}
+                height={56}
+                priority
+                className="h-12 w-12 flex-none rounded-full object-contain drop-shadow-[0_0_16px_rgba(216,163,58,0.4)] md:h-14 md:w-14"
+              />
+              <div>
+                <p className="font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Ouça a vida em Icarus</p>
+                <h2 className="mt-1 font-display text-lg font-bold text-ember">
+                  {selectedTrack?.title ?? "Nenhuma faixa disponível"}
+                </h2>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              className="rounded-full border border-mystic/20 px-3 py-1 text-xs text-parchment/70 transition hover:border-gold/40 hover:text-ember"
+              aria-label="Fechar player de ambiência"
+            >
+              Fechar
+            </button>
+          </div>
+
+          {!hasAvailableTracks ? (
+            <p className="mt-4 rounded-2xl border border-mystic/15 bg-black/25 px-4 py-3 text-sm leading-6 text-parchment/65">
+              Nenhuma faixa disponível. Adicione arquivos .mp3 em <span className="text-mystic">public/audio</span> para que eles apareçam automaticamente aqui.
+            </p>
+          ) : null}
+
+          {tracks.length > 1 && selectedTrack ? (
+            <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.18em] text-parchment/60">
+              Faixa
+              <select
+                value={selectedTrack?.file ?? ""}
+                onChange={(event) => selectTrack(event.target.value, isPlayingRef.current)}
+                className="mt-2 w-full rounded-2xl border border-mystic/20 bg-black/40 px-3 py-2 text-sm normal-case tracking-normal text-parchment outline-none transition focus:border-gold/50"
+              >
+                {tracks.map((track) => (
+                  <option key={track.file} value={track.file} className="bg-abyss text-parchment">
+                    {track.title}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={toggleAmbience}
+              disabled={!hasAvailableTracks}
+              className={`col-span-2 rounded-2xl border px-3 py-2 text-sm font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 ${
+                isPlaying
+                  ? "border-mystic/35 bg-mystic/10 text-mystic hover:bg-mystic/20"
+                  : "border-gold/40 bg-gold/15 text-ember hover:bg-gold/25"
+              }`}
+            >
+              {isPlaying ? "Pausar Player" : "Ativar Player"}
+            </button>
+            <button
+              type="button"
+              onClick={() => moveTrack("previous")}
+              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={tracks.length < 2}
+            >
+              Anterior
+            </button>
+            <button
+              type="button"
+              onClick={() => moveTrack("next")}
+              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={tracks.length < 2}
+            >
+              Próxima
+            </button>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_auto] md:grid-cols-1">
+            <label className="text-xs font-semibold uppercase tracking-[0.18em] text-parchment/60">
+              Volume
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={(event) => setVolume(Number(event.target.value))}
+                className="mt-2 w-full accent-mystic"
+              />
+            </label>
+
+            <label className="flex items-center gap-3 rounded-2xl border border-mystic/15 bg-black/20 px-3 py-2 text-sm text-parchment/75">
+              <input
+                type="checkbox"
+                checked={isLooping}
+                onChange={(event) => setIsLooping(event.target.checked)}
+                className="accent-gold"
+              />
+              Loop da lista
+            </label>
+          </div>
+
+          <p className="mt-3 text-xs text-parchment/45">
+            {isPlaying ? "Player ativo: as faixas seguem em sequência." : "Clique em Ativar Player para iniciar sem autoplay forçado."}
+          </p>
+        </div>
+      )}
+    </aside>
+  );
+}
