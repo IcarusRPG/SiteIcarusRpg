@@ -102,6 +102,15 @@ export default function IcarusAudioPlayer() {
     setIsPlaying(false);
   }
 
+  function toggleAmbience() {
+    if (isPlaying) {
+      pauseAmbience();
+      return;
+    }
+
+    playAmbience();
+  }
+
   function moveTrack(direction: "next" | "previous") {
     if (tracks.length === 0) {
       return;
@@ -176,29 +185,28 @@ export default function IcarusAudioPlayer() {
           <div className="mt-4 grid grid-cols-2 gap-2">
             <button
               type="button"
-              onClick={playAmbience}
-              className="rounded-2xl border border-gold/40 bg-gold/15 px-3 py-2 text-sm font-semibold text-ember transition hover:-translate-y-0.5 hover:bg-gold/25"
+              onClick={toggleAmbience}
+              className={`col-span-2 rounded-2xl border px-3 py-2 text-sm font-semibold transition hover:-translate-y-0.5 ${
+                isPlaying
+                  ? "border-mystic/35 bg-mystic/10 text-mystic hover:bg-mystic/20"
+                  : "border-gold/40 bg-gold/15 text-ember hover:bg-gold/25"
+              }`}
             >
-              Ativar Ambiência
-            </button>
-            <button
-              type="button"
-              onClick={pauseAmbience}
-              className="rounded-2xl border border-mystic/35 bg-mystic/10 px-3 py-2 text-sm font-semibold text-mystic transition hover:-translate-y-0.5 hover:bg-mystic/20"
-            >
-              Pausar
+              {isPlaying ? "Pausar Ambiência" : "Ativar Ambiência"}
             </button>
             <button
               type="button"
               onClick={() => moveTrack("previous")}
-              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember"
+              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={tracks.length < 2}
             >
               Anterior
             </button>
             <button
               type="button"
               onClick={() => moveTrack("next")}
-              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember"
+              className="rounded-2xl border border-parchment/15 bg-black/25 px-3 py-2 text-sm font-semibold text-parchment/80 transition hover:border-gold/35 hover:text-ember disabled:cursor-not-allowed disabled:opacity-45"
+              disabled={tracks.length < 2}
             >
               Próxima
             </button>
@@ -230,7 +238,7 @@ export default function IcarusAudioPlayer() {
           </div>
 
           <p className="mt-3 text-xs text-parchment/45">
-            {isPlaying ? "Ambiência ecoando pelo salão." : "Clique em Ativar Ambiência para iniciar."}
+            {isPlaying ? "Ambiência ecoando pelo salão." : "Clique em Ativar Ambiência para iniciar sem autoplay forçado."}
           </p>
         </div>
       )}
