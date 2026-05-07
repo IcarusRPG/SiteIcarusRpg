@@ -197,6 +197,14 @@ export default function AlfarsSection() {
                       <p key={paragraph}>{paragraph}</p>
                     ))}
                   </div>
+
+                  <section className="mt-8 rounded-3xl border border-mystic/25 bg-mystic/5 p-5 shadow-arcane md:mt-10 md:p-6" aria-labelledby="alfar-obrigacoes-restricoes">
+                    <h3 id="alfar-obrigacoes-restricoes" className="font-display text-2xl font-black text-ember md:text-3xl">
+                      Obrigações &amp; Restrições.
+                    </h3>
+                    <div className="gold-divider my-5" />
+                    <div className="min-h-24 rounded-2xl border border-gold/15 bg-black/20" aria-hidden="true" />
+                  </section>
                 </div>
               </div>
             </article>
