@@ -8,11 +8,11 @@ export default function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="lg:hidden">
+    <div className="xl:hidden">
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-mystic/30 bg-abyss/70 text-mystic shadow-arcane transition hover:border-gold/50 hover:text-ember"
+        className="inline-flex h-10 w-10 md:h-11 md:w-11 items-center justify-center rounded-xl border border-mystic/30 bg-abyss/70 text-mystic shadow-arcane transition hover:border-gold/50 hover:text-ember"
         aria-expanded={isOpen}
         aria-label="Abrir menu de navegação"
       >
@@ -24,17 +24,17 @@ export default function MobileMenu() {
       </button>
 
       <div
-        className={`absolute left-4 right-4 top-[4.75rem] overflow-hidden rounded-3xl border border-gold/20 bg-abyss/95 shadow-arcane backdrop-blur-xl transition-all duration-300 ${
-          isOpen ? "max-h-[34rem] opacity-100" : "max-h-0 border-transparent opacity-0"
+        className={`absolute left-3 right-3 top-[4.25rem] md:left-6 md:right-6 md:top-[4.75rem] overflow-hidden rounded-3xl border border-gold/20 bg-abyss/95 shadow-arcane backdrop-blur-xl transition-all duration-300 ${
+          isOpen ? "max-h-[calc(100vh-5.5rem)] overflow-y-auto opacity-100" : "max-h-0 border-transparent opacity-0"
         }`}
       >
-        <nav className="space-y-1 p-4">
+        <nav className="space-y-1 p-3 md:p-4">
           {navigationItems.map((item) => (
             <div key={item.href}>
               <Link
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className="block rounded-2xl px-4 py-3 text-sm font-semibold text-parchment transition hover:bg-mystic/10 hover:text-mystic"
+                className="block rounded-2xl px-3 py-2.5 text-sm md:px-4 md:py-3 font-semibold text-parchment transition hover:bg-mystic/10 hover:text-mystic"
               >
                 {item.label}
               </Link>

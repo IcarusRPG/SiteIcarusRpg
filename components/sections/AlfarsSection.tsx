@@ -122,18 +122,18 @@ export default function AlfarsSection() {
   );
 
   return (
-    <section className="bg-metal-radial pb-24 pt-32">
+    <section className="bg-metal-radial pb-16 pt-24 md:pb-24 md:pt-32">
       <div className="container-icarus">
         <div className="mx-auto max-w-5xl text-center">
-          <p className="font-display text-sm uppercase tracking-[0.35em] text-mystic/85">Panteão de Icarus</p>
-          <h1 className="mt-4 font-display text-4xl font-black text-ember sm:text-6xl">Alfars</h1>
-          <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-parchment/75">
+          <p className="font-display text-xs uppercase tracking-[0.28em] md:text-sm md:tracking-[0.35em] text-mystic/85">Panteão de Icarus</p>
+          <h1 className="mt-4 font-display text-2xl font-black text-ember sm:text-4xl lg:text-5xl lg:text-6xl">Alfars</h1>
+          <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-parchment/75 md:text-base md:leading-8">
             Forças primordiais, vozes do Núcleo e divindades que ecoam através de virtudes, conflitos e escolhas eternas.
           </p>
         </div>
 
-        <div className="mt-14 grid items-start gap-8 lg:grid-cols-[18rem_1fr]">
-          <nav className="sticky top-24 z-30 flex flex-col gap-2 rounded-3xl border border-gold/20 bg-abyss/85 p-4 shadow-arcane backdrop-blur-xl" aria-label="Lista de Alfars">
+        <div className="mt-10 grid items-start gap-6 md:mt-14 lg:grid-cols-[16rem_1fr] xl:grid-cols-[18rem_1fr] xl:gap-8">
+          <nav className="z-30 flex max-h-none flex-col gap-2 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto rounded-3xl border border-gold/20 bg-abyss/85 p-3 shadow-arcane md:p-4 backdrop-blur-xl" aria-label="Lista de Alfars">
             <p className="px-2 pb-1 font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Escolha um Alfar</p>
             {alfars.map((alfar) => {
               const isSelected = alfar.name === selectedAlfar.name;
@@ -143,7 +143,7 @@ export default function AlfarsSection() {
                   key={alfar.name}
                   type="button"
                   onClick={() => setSelectedName(alfar.name)}
-                  className={`rounded-2xl border px-4 py-3 text-left text-sm font-semibold transition duration-300 ${
+                  className={`rounded-2xl border px-3 py-2.5 text-left text-sm md:px-4 md:py-3 font-semibold transition duration-300 ${
                     isSelected
                       ? "border-gold/55 bg-gold/15 text-ember shadow-gold"
                       : "border-mystic/20 bg-mystic/5 text-parchment hover:-translate-y-0.5 hover:border-gold/45 hover:bg-gold/10 hover:text-ember"
@@ -156,11 +156,11 @@ export default function AlfarsSection() {
             })}
           </nav>
 
-          <div className="space-y-8">
-            <article className="rounded-[2rem] border border-mystic/20 bg-black/42 p-6 shadow-arcane backdrop-blur-md sm:p-8 lg:p-10">
-              <h2 className="font-display text-3xl font-black text-ember sm:text-5xl">As forças primordiais</h2>
-              <div className="gold-divider my-7" />
-              <div className="space-y-5 text-base leading-8 text-parchment/80">
+          <div className="space-y-6 md:space-y-8">
+            <article className="rounded-[2rem] border border-mystic/20 bg-black/42 p-5 shadow-arcane backdrop-blur-md sm:p-8 lg:p-10">
+              <h2 className="font-display text-2xl font-black text-ember sm:text-4xl lg:text-5xl">As forças primordiais</h2>
+              <div className="gold-divider my-5 md:my-7" />
+              <div className="space-y-5 text-sm leading-7 text-parchment/80 md:text-base md:leading-8">
                 <p>
                   Os Alfars são as forças primordiais que moldaram Icarus a partir do vazio. Nascidos da centelha de Orun, caminharam sobre o nada e o transformaram em vida, propósito e destino. Logos deu forma às raças com os próprios elementos, selando o início de tudo.
                 </p>
@@ -170,9 +170,9 @@ export default function AlfarsSection() {
               </div>
             </article>
 
-            <article key={selectedAlfar.name} className="animate-alfar-reveal overflow-hidden rounded-[2rem] border border-gold/25 bg-black/45 p-6 shadow-gold backdrop-blur-md sm:p-8 lg:p-10">
-              <div className="flex flex-col gap-8 xl:grid xl:grid-cols-[0.85fr_1.15fr] xl:items-start">
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-mystic/25 bg-abyss/70 shadow-arcane">
+            <article key={selectedAlfar.name} className="animate-alfar-reveal overflow-hidden rounded-[2rem] border border-gold/25 bg-black/45 p-5 shadow-gold backdrop-blur-md sm:p-8 lg:p-10">
+              <div className="flex flex-col gap-6 md:gap-8 xl:grid xl:grid-cols-[0.85fr_1.15fr] xl:items-start">
+                <div className="relative aspect-[4/5] max-h-[38rem] overflow-hidden rounded-[1.75rem] border border-mystic/25 bg-abyss/70 shadow-arcane">
                   <Image
                     src={selectedAlfar.image}
                     alt={selectedAlfar.name}
@@ -182,17 +182,17 @@ export default function AlfarsSection() {
                     className="object-cover transition duration-700 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-abyss/65 via-transparent to-transparent" />
-                  <div className="absolute inset-x-6 bottom-6 rounded-2xl border border-gold/20 bg-black/55 px-5 py-4 backdrop-blur-md">
-                    <p className="font-display text-3xl font-black text-ember">{selectedAlfar.name}</p>
+                  <div className="absolute inset-x-4 bottom-4 md:inset-x-6 md:bottom-6 rounded-2xl border border-gold/20 bg-black/55 px-4 py-3 md:px-5 md:py-4 backdrop-blur-md">
+                    <p className="font-display text-2xl font-black text-ember md:text-3xl">{selectedAlfar.name}</p>
                     <p className="mt-1 text-xs uppercase tracking-[0.28em] text-mystic/80">Alfar de Icarus</p>
                   </div>
                 </div>
 
                 <div>
-                  <p className="font-display text-sm uppercase tracking-[0.35em] text-mystic/85">Arquivo divino</p>
-                  <h2 className="mt-3 font-display text-4xl font-black text-ember sm:text-5xl">{selectedAlfar.name}</h2>
-                  <div className="gold-divider my-7" />
-                  <div className="space-y-5 text-base leading-8 text-parchment/82">
+                  <p className="font-display text-xs uppercase tracking-[0.28em] md:text-sm md:tracking-[0.35em] text-mystic/85">Arquivo divino</p>
+                  <h2 className="mt-3 font-display text-3xl font-black text-ember sm:text-4xl lg:text-5xl">{selectedAlfar.name}</h2>
+                  <div className="gold-divider my-5 md:my-7" />
+                  <div className="space-y-4 text-sm leading-7 text-parchment/82 md:space-y-5 md:text-base md:leading-8">
                     {selectedAlfar.description.map((paragraph) => (
                       <p key={paragraph}>{paragraph}</p>
                     ))}
