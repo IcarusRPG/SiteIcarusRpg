@@ -124,15 +124,17 @@ export default function IcarusAudioPlayer() {
     selectTrack(tracks[nextIndex].file);
   }
 
-  if (!hasLoaded || tracks.length === 0 || !selectedTrack) {
+  if (!hasLoaded) {
     return null;
   }
+
+  const hasAvailableTracks = tracks.length > 0 && Boolean(selectedTrack);
 
   return (
     <aside className="fixed inset-x-3 bottom-3 z-50 md:inset-x-auto md:bottom-6 md:right-6 md:w-80" aria-label="Player de ambiência de Icarus RPG">
       <audio
         ref={audioRef}
-        src={selectedTrack.file}
+        src={selectedTrack?.file}
         loop={isLooping}
         preload="metadata"
         onEnded={() => setIsPlaying(false)}
@@ -153,7 +155,9 @@ export default function IcarusAudioPlayer() {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-display text-xs uppercase tracking-[0.28em] text-mystic/80">Ambiência</p>
-              <h2 className="mt-1 font-display text-lg font-bold text-ember">{selectedTrack.title}</h2>
+              <h2 className="mt-1 font-display text-lg font-bold text-ember">
+                {selectedTrack?.title ?? "Nenhuma ambiência disponível"}
+              </h2>
             </div>
             <button
               type="button"
@@ -165,11 +169,17 @@ export default function IcarusAudioPlayer() {
             </button>
           </div>
 
-          {tracks.length > 1 ? (
+          {!hasAvailableTracks ? (
+            <p className="mt-4 rounded-2xl border border-mystic/15 bg-black/25 px-4 py-3 text-sm leading-6 text-parchment/65">
+              Nenhuma ambiência disponível. Adicione arquivos .mp3 em <span className="text-mystic">public/audio</span> para que eles apareçam automaticamente aqui.
+            </p>
+          ) : null}
+
+          {tracks.length > 1 && selectedTrack ? (
             <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.18em] text-parchment/60">
               Faixa
               <select
-                value={selectedTrack.file}
+                value={selectedTrack?.file ?? ""}
                 onChange={(event) => selectTrack(event.target.value)}
                 className="mt-2 w-full rounded-2xl border border-mystic/20 bg-black/40 px-3 py-2 text-sm normal-case tracking-normal text-parchment outline-none transition focus:border-gold/50"
               >
@@ -186,7 +196,8 @@ export default function IcarusAudioPlayer() {
             <button
               type="button"
               onClick={toggleAmbience}
-              className={`col-span-2 rounded-2xl border px-3 py-2 text-sm font-semibold transition hover:-translate-y-0.5 ${
+              disabled={!hasAvailableTracks}
+              className={`col-span-2 rounded-2xl border px-3 py-2 text-sm font-semibold transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-45 ${
                 isPlaying
                   ? "border-mystic/35 bg-mystic/10 text-mystic hover:bg-mystic/20"
                   : "border-gold/40 bg-gold/15 text-ember hover:bg-gold/25"
